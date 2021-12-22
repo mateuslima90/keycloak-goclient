@@ -4,22 +4,20 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"log"
-	"net/http"
-
 	oidc "github.com/coreos/go-oidc"
 	"golang.org/x/oauth2"
-)
-
-var (
-	clientID = "mkth-customer-client"
-	clientSecret = "15cfe076-c8b1-46f0-8630-a3c733a5530d"
+	"log"
+	"net/http"
+	"os"
 )
 
 func main() {
 	ctx := context.Background()
 
-	issuer := "http://localhost:8080/auth/realms/master"
+	clientID := os.Getenv("CLIENTID")
+	clientSecret := os.Getenv("CLIENTSECRET")
+	issuer := os.Getenv("ISSUER")
+
 	provider, err := oidc.NewProvider(ctx, issuer)
 	if err != nil {
 		log.Fatal(err)
@@ -29,7 +27,7 @@ func main() {
 		ClientID: clientID,
 		ClientSecret: clientSecret,
 		Endpoint:    provider.Endpoint(),
-		RedirectURL: "http://localhost:8081/auth/callback",
+		RedirectURL: "http://192.168.1.117:8081/auth/callback",
 		Scopes:      []string{oidc.ScopeOpenID, "profile", "email", "roles", "openid"},
 	}
 
